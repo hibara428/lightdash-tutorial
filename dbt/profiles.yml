@@ -1,0 +1,11 @@
+lightdash_tutorial:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: application-default
+      project: "{{ env_var('GCP_PROJECT_ID') }}"
+      dataset: lightdash_tutorial
+      threads: 4
+      timeout_seconds: 300
+      location: US

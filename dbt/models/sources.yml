@@ -1,0 +1,85 @@
+version: 2
+
+sources:
+  - name: thelook_ecommerce
+    description: "BigQuery public dataset - TheLook EC サイトのサンプルデータ"
+    database: bigquery-public-data
+    schema: thelook_ecommerce
+    tables:
+      - name: users
+        description: "顧客マスタ"
+        columns:
+          - name: id
+            description: "顧客の一意識別子"
+          - name: first_name
+            description: "名"
+          - name: last_name
+            description: "姓"
+          - name: email
+            description: "メールアドレス"
+          - name: age
+            description: "年齢"
+          - name: gender
+            description: "性別"
+          - name: city
+            description: "市区町村"
+          - name: country
+            description: "国"
+          - name: created_at
+            description: "アカウント作成日時"
+
+      - name: orders
+        description: "注文ヘッダ"
+        columns:
+          - name: order_id
+            description: "注文の一意識別子"
+          - name: user_id
+            description: "顧客ID"
+          - name: status
+            description: "注文ステータス（Shipped / Complete / Cancelled / Returned / Processing）"
+          - name: created_at
+            description: "注文日時"
+          - name: returned_at
+            description: "返品日時"
+          - name: shipped_at
+            description: "出荷日時"
+          - name: delivered_at
+            description: "配達完了日時"
+          - name: num_of_item
+            description: "注文点数"
+
+      - name: order_items
+        description: "注文明細"
+        columns:
+          - name: id
+            description: "明細の一意識別子"
+          - name: order_id
+            description: "注文ID"
+          - name: user_id
+            description: "顧客ID"
+          - name: product_id
+            description: "商品ID"
+          - name: status
+            description: "明細ステータス"
+          - name: sale_price
+            description: "販売価格（ドル）"
+          - name: created_at
+            description: "注文日時"
+
+      - name: products
+        description: "商品マスタ"
+        columns:
+          - name: id
+            description: "商品の一意識別子"
+          - name: name
+            description: "商品名"
+          - name: category
+            description: "カテゴリ"
+          - name: brand
+            description: "ブランド"
+          - name: department
+            description: "部門（Men / Women）"
+          - name: retail_price
+            description: "定価（ドル）"
+          - name: cost
+            description: "原価（ドル）"

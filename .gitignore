@@ -1,0 +1,14 @@
+# 環境変数
+.env
+
+# dbt 実行結果
+dbt/target/
+dbt/logs/
+dbt/.user.yml
+dbt/dbt_packages/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/

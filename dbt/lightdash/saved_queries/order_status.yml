@@ -1,0 +1,19 @@
+version: 1
+name: order_status_distribution
+label: 注文ステータス分布
+description: 注文件数をステータス別に集計した円グラフ
+tableName: orders
+metricQuery:
+  dimensions:
+    - orders_status
+  metrics:
+    - orders_order_count
+  filters: {}
+  sorts:
+    - fieldId: orders_order_count
+      descending: true
+  limit: 10
+chartConfig:
+  type: pie
+  config:
+    groupColorDefaults: {}

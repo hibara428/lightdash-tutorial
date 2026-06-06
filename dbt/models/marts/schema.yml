@@ -1,0 +1,284 @@
+version: 2
+
+models:
+  - name: customers
+    description: "顧客ごとの注文集計マート。Lightdash での顧客分析に使用。"
+    meta:
+      label: "顧客"
+    columns:
+      - name: user_id
+        description: "顧客の一意識別子"
+        tests:
+          - unique
+          - not_null
+        meta:
+          dimension:
+            type: number
+            label: "顧客ID"
+
+      - name: first_name
+        description: "名"
+        tests:
+          - not_null
+        meta:
+          dimension:
+            type: string
+            label: "名"
+
+      - name: last_name
+        description: "姓"
+        tests:
+          - not_null
+        meta:
+          dimension:
+            type: string
+            label: "姓"
+
+      - name: email
+        description: "メールアドレス"
+        meta:
+          dimension:
+            type: string
+            label: "メールアドレス"
+
+      - name: age
+        description: "年齢"
+        meta:
+          dimension:
+            type: number
+            label: "年齢"
+          metrics:
+            avg_customer_age:
+              type: average
+              label: "平均年齢"
+              format: "#,##0.0"
+
+      - name: gender
+        description: "性別"
+        meta:
+          dimension:
+            type: string
+            label: "性別"
+
+      - name: city
+        description: "市区町村"
+        meta:
+          dimension:
+            type: string
+            label: "都市"
+
+      - name: country
+        description: "国"
+        meta:
+          dimension:
+            type: string
+            label: "国"
+
+      - name: registered_at
+        description: "アカウント登録日時"
+        meta:
+          dimension:
+            type: timestamp
+            label: "登録日"
+            time_intervals:
+              - DAY
+              - WEEK
+              - MONTH
+              - YEAR
+
+      - name: first_order_date
+        description: "初回注文日時"
+        meta:
+          dimension:
+            type: timestamp
+            label: "初回注文日"
+            time_intervals:
+              - DAY
+              - WEEK
+              - MONTH
+              - YEAR
+
+      - name: latest_order_date
+        description: "最終注文日時"
+        meta:
+          dimension:
+            type: timestamp
+            label: "最終注文日"
+            time_intervals:
+              - DAY
+              - WEEK
+              - MONTH
+              - YEAR
+
+      - name: number_of_orders
+        description: "注文件数（キャンセル・返品除く）"
+        tests:
+          - not_null
+        meta:
+          dimension:
+            type: number
+            label: "注文件数"
+          metrics:
+            total_orders:
+              type: sum
+              label: "注文総数"
+              description: "全顧客の注文件数合計"
+            avg_orders_per_customer:
+              type: average
+              label: "顧客あたり平均注文数"
+              format: "#,##0.0"
+
+      - name: total_spent
+        description: "累計購買金額（ドル、キャンセル・返品除く）"
+        tests:
+          - not_null
+        meta:
+          dimension:
+            type: number
+            label: "累計購買金額"
+            format: "[$USD] #,##0.00"
+          metrics:
+            total_revenue:
+              type: sum
+              label: "総売上"
+              format: "[$USD] #,##0.00"
+            avg_customer_value:
+              type: average
+              label: "顧客平均購買金額"
+              format: "[$USD] #,##0.00"
+
+  - name: orders
+    description: "注文ごとの詳細マート。支払い・商品情報を集計済み。"
+    meta:
+      label: "注文"
+    columns:
+      - name: order_id
+        description: "注文の一意識別子"
+        tests:
+          - unique
+          - not_null
+        meta:
+          dimension:
+            type: number
+            label: "注文ID"
+
+      - name: user_id
+        description: "顧客ID"
+        tests:
+          - not_null
+        meta:
+          dimension:
+            type: number
+            label: "顧客ID"
+
+      - name: status
+        description: "注文ステータス"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Shipped', 'Complete', 'Cancelled', 'Returned', 'Processing']
+        meta:
+          dimension:
+            type: string
+            label: "ステータス"
+            colors:
+              Complete: "#10B981"
+              Shipped: "#F59E0B"
+              Processing: "#3B82F6"
+              Returned: "#EF4444"
+              Cancelled: "#6B7280"
+
+      - name: ordered_at
+        description: "注文日時"
+        tests:
+          - not_null
+        meta:
+          dimension:
+            type: timestamp
+            label: "注文日"
+            time_intervals:
+              - DAY
+              - WEEK
+              - MONTH
+              - QUARTER
+              - YEAR
+
+      - name: shipped_at
+        description: "出荷日時"
+        meta:
+          dimension:
+            type: timestamp
+            label: "出荷日"
+            time_intervals:
+              - DAY
+              - WEEK
+              - MONTH
+
+      - name: delivered_at
+        description: "配達完了日時"
+        meta:
+          dimension:
+            type: timestamp
+            label: "配達完了日"
+            time_intervals:
+              - DAY
+              - WEEK
+              - MONTH
+
+      - name: returned_at
+        description: "返品日時（返品なしの場合 NULL）"
+        meta:
+          dimension:
+            type: timestamp
+            label: "返品日"
+            time_intervals:
+              - DAY
+              - WEEK
+              - MONTH
+
+      - name: item_count
+        description: "注文内の商品点数"
+        tests:
+          - not_null
+        meta:
+          dimension:
+            type: number
+            label: "商品点数"
+          metrics:
+            total_items_sold:
+              type: sum
+              label: "販売商品総数"
+            avg_items_per_order:
+              type: average
+              label: "1注文あたり平均商品数"
+              format: "#,##0.0"
+
+      - name: total_amount
+        description: "注文合計金額（ドル）"
+        tests:
+          - not_null
+        meta:
+          dimension:
+            type: number
+            label: "注文金額"
+            format: "[$USD] #,##0.00"
+          metrics:
+            total_revenue:
+              type: sum
+              label: "総売上"
+              format: "[$USD] #,##0.00"
+            avg_order_value:
+              type: average
+              label: "平均注文金額"
+              format: "[$USD] #,##0.00"
+            order_count:
+              type: count_distinct
+              sql: order_id
+              label: "注文件数"
+
+      - name: top_category
+        description: "注文内で最も多かった商品カテゴリ"
+        meta:
+          dimension:
+            type: string
+            label: "主カテゴリ"

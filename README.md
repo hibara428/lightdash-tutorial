@@ -19,7 +19,7 @@ bigquery-public-data                 ホストマシン                    Docke
 - Python 3.9 以上
 - Docker および Docker Compose（Docker Desktop 推奨）
 - GCP プロジェクト（BigQuery API が有効であること）
-- GCP サービスアカウントの JSON キー（BigQuery Data Viewer 以上のロール）
+- gcloud CLI（`gcloud auth application-default login` で ADC 認証済みであること）
 
 ---
 
@@ -42,27 +42,24 @@ pip install dbt-core dbt-bigquery
 dbt --version
 ```
 
-### ステップ 3: GCP 認証情報の設定
+### ステップ 3: GCP 認証
 
-GCP のサービスアカウント JSON キーをプロジェクトルートに配置します。
+Application Default Credentials (ADC) で認証します。サービスアカウント JSON は不要です。
 
 ```bash
-# ダウンロードした JSON キーをコピー
-cp ~/Downloads/your-sa-key.json ./credentials.json
+gcloud auth application-default login
 ```
 
-> **注意**: `credentials.json` は `.gitignore` に含まれています。絶対にコミットしないでください。
-
-環境変数ファイルを作成します。
+ブラウザが開いて Google アカウントの認証が完了したら、環境変数ファイルを作成します。
 
 ```bash
 cp .env.example .env
 ```
 
-`.env` を編集して `GCP_PROJECT_ID` に自分のプロジェクト ID を設定します。
+`.env` と現在のシェルに `GCP_PROJECT_ID` を設定します。
 
 ```bash
-export GCP_PROJECT_ID=your-gcp-project-id  # シェルにも設定しておく
+export GCP_PROJECT_ID=your-gcp-project-id
 ```
 
 ### ステップ 4: dbt の動作確認
@@ -145,6 +142,12 @@ docker compose logs -f lightdash
 
 **BigQuery ウェアハウスの設定**:
 
+> **認証について**: dbt は ADC（`gcloud auth application-default login`）を使いますが、Lightdash は Docker コンテナ内で動くため ADC にアクセスできません。Lightdash には**サービスアカウント JSON** を別途用意して設定します。
+
+サービスアカウントに必要なロール:
+- `BigQuery Data Viewer`（データ参照）
+- `BigQuery Job User`（クエリ実行）
+
 | 項目 | 設定値 |
 |------|--------|
 | Warehouse | `BigQuery` |
@@ -152,7 +155,7 @@ docker compose logs -f lightdash
 | Project | `your-gcp-project-id` |
 | Dataset | `lightdash_tutorial` |
 | Location | `US` |
-| Service Account JSON | サービスアカウント JSON の内容を貼り付け |
+| Service Account JSON | サービスアカウント JSON の内容を貼り付け（ファイルは不要） |
 
 「Test connection」で接続確認後、「Save」で保存します。
 
@@ -280,9 +283,9 @@ docker compose down -v
 
 ### `dbt debug` で BigQuery への接続エラーが発生する
 
-- `credentials.json` がプロジェクトルートに存在するか確認
-- `GCP_PROJECT_ID` 環境変数が設定されているか確認
-- サービスアカウントに BigQuery Data Viewer ロールがあるか確認
+- `gcloud auth application-default login` が完了しているか確認
+- `GCP_PROJECT_ID` 環境変数が設定されているか確認（`echo $GCP_PROJECT_ID`）
+- `gcloud auth application-default print-access-token` でトークンが取得できるか確認
 
 ### Lightdash が起動しない
 

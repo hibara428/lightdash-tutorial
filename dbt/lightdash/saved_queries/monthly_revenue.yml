@@ -1,0 +1,25 @@
+version: 1
+name: monthly_revenue
+label: 月次売上
+description: 月ごとの売上合計を時系列で表示する棒グラフ
+tableName: orders
+metricQuery:
+  dimensions:
+    - orders_ordered_at_month
+  metrics:
+    - orders_total_revenue
+  filters: {}
+  sorts:
+    - fieldId: orders_ordered_at_month
+      descending: false
+  limit: 25
+chartConfig:
+  type: bar
+  config:
+    layout:
+      xField: orders_ordered_at_month
+      yField:
+        - orders_total_revenue
+    eChartsConfig:
+      legend:
+        show: true

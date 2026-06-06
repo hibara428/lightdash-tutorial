@@ -1,0 +1,35 @@
+version: 1
+name: sales_dashboard
+label: 売上分析ダッシュボード
+description: TheLook ecommerce の売上・顧客分析ダッシュボード（dashboard as code で定義）
+filters: []
+tiles:
+  - uuid: tile-monthly-revenue
+    label: 月次売上
+    type: saved_chart
+    properties:
+      savedChartName: monthly_revenue
+    x: 0
+    y: 0
+    w: 12
+    h: 4
+
+  - uuid: tile-order-status
+    label: 注文ステータス分布
+    type: saved_chart
+    properties:
+      savedChartName: order_status_distribution
+    x: 0
+    y: 4
+    w: 6
+    h: 4
+
+  - uuid: tile-top-countries
+    label: 国別売上ランキング
+    type: saved_chart
+    properties:
+      savedChartName: top_countries_by_revenue
+    x: 6
+    y: 4
+    w: 6
+    h: 4

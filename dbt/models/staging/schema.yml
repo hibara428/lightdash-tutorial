@@ -1,0 +1,98 @@
+version: 2
+
+models:
+  - name: stg_users
+    description: "ステージング済み顧客データ（thelook_ecommerce.users から変換）"
+    columns:
+      - name: user_id
+        description: "顧客の一意識別子"
+        tests:
+          - unique
+          - not_null
+      - name: first_name
+        tests:
+          - not_null
+      - name: last_name
+        tests:
+          - not_null
+      - name: email
+        tests:
+          - unique
+          - not_null
+      - name: age
+        tests:
+          - not_null
+      - name: gender
+        tests:
+          - not_null
+      - name: city
+        tests:
+          - not_null
+      - name: country
+        tests:
+          - not_null
+      - name: registered_at
+        tests:
+          - not_null
+
+  - name: stg_orders
+    description: "ステージング済み注文ヘッダ（thelook_ecommerce.orders から変換）"
+    columns:
+      - name: order_id
+        description: "注文の一意識別子"
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_users')
+              field: user_id
+      - name: status
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Shipped', 'Complete', 'Cancelled', 'Returned', 'Processing']
+      - name: ordered_at
+        tests:
+          - not_null
+
+  - name: stg_order_items
+    description: "ステージング済み注文明細（thelook_ecommerce.order_items から変換）"
+    columns:
+      - name: item_id
+        description: "明細の一意識別子"
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: product_id
+        tests:
+          - not_null
+      - name: sale_price
+        tests:
+          - not_null
+
+  - name: stg_products
+    description: "ステージング済み商品マスタ（thelook_ecommerce.products から変換）"
+    columns:
+      - name: product_id
+        description: "商品の一意識別子"
+        tests:
+          - unique
+          - not_null
+      - name: product_name
+        tests:
+          - not_null
+      - name: category
+        tests:
+          - not_null
+      - name: brand
+        tests:
+          - not_null

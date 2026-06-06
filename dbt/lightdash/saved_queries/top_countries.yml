@@ -1,0 +1,21 @@
+version: 1
+name: top_countries_by_revenue
+label: 国別売上ランキング
+description: 国ごとの総売上と注文数を集計したテーブル
+tableName: customers
+metricQuery:
+  dimensions:
+    - customers_country
+  metrics:
+    - customers_total_revenue
+    - customers_total_orders
+  filters: {}
+  sorts:
+    - fieldId: customers_total_revenue
+      descending: true
+  limit: 20
+chartConfig:
+  type: table
+  config:
+    showColumnCalculation: true
+    conditionalFormattings: []

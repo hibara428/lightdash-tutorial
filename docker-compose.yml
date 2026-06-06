@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:14-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${PGUSER}
+      POSTGRES_PASSWORD: ${PGPASSWORD}
+      POSTGRES_DB: ${PGDATABASE}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PGUSER} -d ${PGDATABASE}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  lightdash:
+    image: lightdash/lightdash:latest
+    platform: linux/amd64
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${PORT:-8080}:${PORT:-8080}"
+    environment:
+      LIGHTDASH_SECRET: ${LIGHTDASH_SECRET}
+      PGHOST: ${PGHOST}
+      PGPORT: ${PGPORT}
+      PGUSER: ${PGUSER}
+      PGPASSWORD: ${PGPASSWORD}
+      PGDATABASE: ${PGDATABASE}
+      PORT: ${PORT:-8080}
+      LIGHTDASH_LOG_LEVEL: ${LIGHTDASH_LOG_LEVEL:-info}
+      DBT_PROJECT_DIR: /usr/app/dbt
+      TRUST_PROXY: "false"
+      SECURE_COOKIES: "false"
+    volumes:
+      - ./dbt:/usr/app/dbt
+
+volumes:
+  pg_data:
