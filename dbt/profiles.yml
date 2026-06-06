@@ -3,7 +3,7 @@ lightdash_tutorial:
   outputs:
     dev:
       type: bigquery
-      method: application-default
+      method: oauth
       project: "{{ env_var('GCP_PROJECT_ID') }}"
       dataset: lightdash_tutorial
       threads: 4

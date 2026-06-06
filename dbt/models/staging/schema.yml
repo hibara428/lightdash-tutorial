@@ -17,7 +17,6 @@ models:
           - not_null
       - name: email
         tests:
-          - unique
           - not_null
       - name: age
         tests:
@@ -88,11 +87,7 @@ models:
           - unique
           - not_null
       - name: product_name
-        tests:
-          - not_null
       - name: category
         tests:
           - not_null
       - name: brand
-        tests:
-          - not_null

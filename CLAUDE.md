@@ -4,17 +4,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Common Commands
 
-すべての dbt コマンドは `dbt/` ディレクトリで `--profiles-dir .` を付けて実行する（`profiles.yml` がプロジェクトルートにあるため）。
+依存関係は `uv` で管理する。`pyproject.toml` がプロジェクトルートにある。
 
 ```bash
-# dbt
-cd dbt
-dbt debug --profiles-dir .          # BigQuery 接続確認
-dbt run --profiles-dir .            # 全モデル実行
-dbt run --profiles-dir . -s customers  # 特定モデルのみ実行
-dbt test --profiles-dir .           # 全テスト実行
-dbt test --profiles-dir . -s stg_orders  # 特定モデルのテストのみ
-dbt compile --profiles-dir .        # SQL コンパイル（Lightdash 用 manifest.json 生成）
+# 依存インストール（初回・pyproject.toml 変更時）
+uv sync
+```
+
+dbt コマンドは `dbt/` ディレクトリで実行する。`dbt/.env` に `GCP_PROJECT_ID` と `DBT_PROFILES_DIR=.` を設定済みのため追加フラグ不要。
+
+```bash
+# dbt（cd dbt してから実行）
+uv run --env-file .env dbt debug
+uv run --env-file .env dbt run
+uv run --env-file .env dbt run -s customers
+uv run --env-file .env dbt test
+uv run --env-file .env dbt test -s stg_orders
+uv run --env-file .env dbt compile
 
 # Lightdash (Docker)
 docker compose up -d                # 起動
@@ -64,8 +70,9 @@ YAML の `fieldId` は `<tableName>_<fieldName>` 形式（例: `orders_total_rev
 ### 環境変数・認証
 
 - BigQuery 認証: `gcloud auth application-default login`（ADC）で行う。サービスアカウント JSON は不要。
-- `GCP_PROJECT_ID` — dbt の `profiles.yml` が `env_var('GCP_PROJECT_ID')` で参照。シェルと `.env` 両方に設定する。
-- `.env` — Docker Compose が読む（`LIGHTDASH_SECRET`, `PG*`, `PORT`）
+- `GCP_PROJECT_ID` — dbt の `profiles.yml` が参照。`dbt/.env` に設定（uv が自動で読む）。
+- `.env`（ルート） — Docker Compose 用（`LIGHTDASH_SECRET`, `PG*`, `PORT`）。
+- `dbt/.env` — dbt 用（`GCP_PROJECT_ID` と `DBT_PROFILES_DIR=.`）。両ファイルとも `.gitignore` 済み。
 
 ### BigQuery データセット・スキーマ
 
