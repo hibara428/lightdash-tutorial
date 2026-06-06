@@ -8,6 +8,9 @@ dbt/logs/
 dbt/.user.yml
 dbt/dbt_packages/
 
+# Node.js
+node_modules/
+
 # Python
 __pycache__/
 *.pyc

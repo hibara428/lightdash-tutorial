@@ -29,10 +29,12 @@ docker compose down -v              # 停止 + ボリューム削除（メタデ
 docker compose logs -f lightdash    # ログ確認
 
 # Lightdash CLI (dashboard as code)
-lightdash login http://localhost:8080 --token YOUR_PAT
-lightdash list projects
-lightdash upload --project-uuid <UUID>   # YAML → Lightdash にデプロイ
-lightdash download --project-uuid <UUID> # Lightdash → YAML に取得
+# npm install の後は npx lightdash で実行
+npx lightdash login http://localhost:8080 --token YOUR_PAT
+npx lightdash list projects
+npx lightdash deploy --project-dir dbt --profiles-dir dbt
+npx lightdash upload --project-uuid <UUID>   # YAML → Lightdash にデプロイ
+npx lightdash download --project-uuid <UUID> # Lightdash → YAML に取得
 ```
 
 ## Architecture
